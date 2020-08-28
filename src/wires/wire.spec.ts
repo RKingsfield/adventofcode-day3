@@ -4,9 +4,11 @@ import { MockWires } from './wire.mock'
 describe('Wire', () => {
 
   describe('getDistance', () => {
-    MockWires.forEach(element => {
-      let wire = new Wire(element.wire1, element.wire2);
-      expect(wire.getDistance()).toBe(element.distance);
+    it('should calculate correct minimum distances', () => {
+      MockWires.forEach(element => {
+        let wire = new Wire(element.wire1, element.wire2);
+        expect(wire.getDistance()).toBe(element.distance);
+      });
     });
   });
 
