@@ -3,11 +3,20 @@ import { MockWires } from './wire.mock'
 
 describe('Wire', () => {
 
-  describe('getDistance', () => {
+  describe('getMinSteps', () => {
+    it('should calculate correct minimum number of steps', () => {
+      MockWires.forEach(element => {
+        let wire = new Wire(element.wire1, element.wire2);
+        expect(wire.getMinSteps()).toBe(element.steps);
+      });
+    });
+  });
+
+  describe('getMinDistance', () => {
     it('should calculate correct minimum distances', () => {
       MockWires.forEach(element => {
         let wire = new Wire(element.wire1, element.wire2);
-        expect(wire.getDistance()).toBe(element.distance);
+        expect(wire.getMinDistance()).toBe(element.distance);
       });
     });
   });

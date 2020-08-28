@@ -1,19 +1,17 @@
-import { Logger } from "@nestjs/common";
-
 export class Wire {
-    private readonly id: number;
+    private readonly uuid: number;
     private wire1: string;
     private wire2: string;
-    private distance?: number;
-    private logger: Logger = new Logger('Wire Model');
+    private minDistance?: number;
+    private minSteps?: number;
 
     constructor(wire1: string, wire2: string){
         this.wire1 = wire1;
         this.wire2 = wire2;
     }
 
-    public getID(): number {
-        return this.id;
+    public getUuid(): number {
+        return this.uuid;
     }
 
     public getWire1(): string {
@@ -24,29 +22,49 @@ export class Wire {
         return this.wire2;
     }
 
-    public getDistance(): number {
-        if(!this.distance){
-            this.distance = this.calcuateSmallestDistance();
+    public getMinDistance(): number {
+        if(!this.minDistance){
+            this.minDistance = this.calcuateSmallestManhattanDistance();
         }
-        return this.distance;
+        return this.minDistance;
+    }
+
+    public getMinSteps(): number {
+        if(!this.minSteps){
+            this.minSteps = this.calcuateSmallestStepsDistance();
+        }
+        return this.minSteps;
     }
 
     /**
-     * This calculates the manhattan distance from the entry point to the closest intersection between two wires.
+     * This calculates the minimum number of "steps" between the entry point and intersections between two wires.
      */
-    private calcuateSmallestDistance(): number {
+    private calcuateSmallestStepsDistance(): number {
         let wire1Path = this.getPath(this.wire1);
         let wire2Path = this.getPath(this.wire2);
 
-        function intersect(a: Array<any>, b: Array<any>) {
-            var t;
-            if (b.length > a.length) t = b, b = a, a = t; // indexOf to loop over shorter
-            return a.filter(function (e) {
-                return b.indexOf(e) > -1;
-            });
-        }
-        
-        let intersection = intersect(
+        let intersection = this.intersect(
+            Array.from(wire1Path.keys()),
+            Array.from(wire2Path.keys())
+        );
+
+        let minSteps: Array<number> = [];
+
+        intersection.forEach(coords => {
+            minSteps.push(wire1Path.get(coords) + wire2Path.get(coords))
+        });
+
+        return Math.min(...minSteps);
+    }
+
+    /**
+     * This calculates the smallest manhattan distance between the entry point and intersections between two wires.
+     */
+    private calcuateSmallestManhattanDistance(): number {
+        let wire1Path = this.getPath(this.wire1);
+        let wire2Path = this.getPath(this.wire2);
+
+        let intersection = this.intersect(
             Array.from(wire1Path.keys()),
             Array.from(wire2Path.keys())
         );
@@ -59,7 +77,6 @@ export class Wire {
 
         return Math.min(...intersection);
     }
-
 
     private getPath(points: string): Map<string, number> {
         let x = 0;
@@ -94,4 +111,14 @@ export class Wire {
         return ans;
     }
 
+    /**
+     * This is not wire specific so it should be moved elsewhere.
+     */
+    private intersect(a: Array<any>, b: Array<any>) {
+        var t;
+        if (b.length > a.length) t = b, b = a, a = t; // indexOf to loop over shorter
+        return a.filter(function (e) {
+            return b.indexOf(e) > -1;
+        });
+    }
 }
