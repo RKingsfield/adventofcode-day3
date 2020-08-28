@@ -22,9 +22,15 @@ export class WiresService {
         });
     }
 
-    addWire(wire): Promise<any> {
+    addWire(input): Promise<any> {
+        let wire = new Wire(
+            input.wire1,
+            input.wire2
+        )
         return new Promise(resolve => {
             this.wires.push(wire);
+            wire.getMinDistance();
+            wire.getMinSteps();
             resolve(this.wires);
         });
     }

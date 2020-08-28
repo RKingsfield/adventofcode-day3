@@ -1,5 +1,5 @@
 export class Wire {
-    private readonly uuid: number;
+    private readonly id: number;
     private wire1: string;
     private wire2: string;
     private minDistance?: number;
@@ -10,8 +10,8 @@ export class Wire {
         this.wire2 = wire2;
     }
 
-    public getUuid(): number {
-        return this.uuid;
+    public getID(): number {
+        return this.id;
     }
 
     public getWire1(): string {
@@ -48,7 +48,7 @@ export class Wire {
             Array.from(wire2Path.keys())
         );
 
-        let minSteps: Array<number> = [];
+        let minSteps = [];
 
         intersection.forEach(coords => {
             minSteps.push(wire1Path.get(coords) + wire2Path.get(coords))
